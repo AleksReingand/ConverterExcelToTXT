@@ -21,7 +21,7 @@ public class Converter
     public static void convertExcelToTxt(File excel, File txt, String savePath)
     {
         FileInputStream file = new FileInputStream(excel);
-        PrintWriter writer = new PrintWriter(savePath + "\\" + txt);
+        PrintWriter writer = new PrintWriter(savePath + txt);
 
         //Create Workbook instance holding reference to .xlsx file
         XSSFWorkbook workbook = new XSSFWorkbook(file);

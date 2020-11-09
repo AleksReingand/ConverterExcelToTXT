@@ -108,7 +108,7 @@ public class ReadExcel extends JPanel implements ActionListener
             String pathToSave = fc.getCurrentDirectory().getAbsolutePath();
             if (returnVal == JFileChooser.APPROVE_OPTION)
             {
-                Converter.convertExcelToTxt(excelFile, txtFile, pathToSave);
+                Converter.convertExcelToTxt(excelFile, txtFile, pathToSave + "\\");
                 //This is where a real application would save the file.
                 log.append("File :" + txtFile.getName() + " saved to: " + pathToSave + newline);
             } else {
