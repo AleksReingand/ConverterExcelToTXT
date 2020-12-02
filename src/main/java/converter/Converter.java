@@ -17,54 +17,54 @@ import java.util.List;
 
 public class Converter
 {
-    @SneakyThrows
-    public static void convertExcelToTxt(File excel, File txt, String savePath)
+  @SneakyThrows
+  public static void convertExcelToTxt(File excel, File txt, String savePath)
+  {
+    FileInputStream file = new FileInputStream(excel);
+    PrintWriter writer = new PrintWriter(savePath + txt);
+
+    //Create Workbook instance holding reference to .xlsx file
+    XSSFWorkbook workbook = new XSSFWorkbook(file);
+
+    //Get first/desired sheet from the workbook
+    XSSFSheet sheet = workbook.getSheetAt(0);
+
+    //Iterate through each rows one by one
+    Iterator<Row> rowIterator = sheet.iterator();
+    List<String> cells = new ArrayList<>();
+    while(rowIterator.hasNext())
     {
-        FileInputStream file = new FileInputStream(excel);
-        PrintWriter writer = new PrintWriter(savePath + txt);
+      Row row = rowIterator.next();
+      if(row.getRowNum() == 2 || row.getRowNum() >= 4)
+      {
+        cells.clear();
+        //For each row, iterate through all the columns
+        Iterator<Cell> cellIterator = row.cellIterator();
 
-        //Create Workbook instance holding reference to .xlsx file
-        XSSFWorkbook workbook = new XSSFWorkbook(file);
-
-        //Get first/desired sheet from the workbook
-        XSSFSheet sheet = workbook.getSheetAt(0);
-
-        //Iterate through each rows one by one
-        Iterator<Row> rowIterator = sheet.iterator();
-        List<String> cells = new ArrayList<>();
-        while (rowIterator.hasNext())
+        while(cellIterator.hasNext())
         {
-            Row row = rowIterator.next();
-            if(row.getRowNum() == 2 || row.getRowNum() > 3)
-            {
-                cells.clear();
-                //For each row, iterate through all the columns
-                Iterator<Cell> cellIterator = row.cellIterator();
+          Cell cell = cellIterator.next();
+          CellType type = cell.getCellType();
+          //Check the cell type and format accordingly
 
-                while (cellIterator.hasNext())
-                {
-                    Cell cell = cellIterator.next();
-                    CellType type = cell.getCellType();
-                    //Check the cell type and format accordingly
-
-                    switch (type)
-                    {
-                        case NUMERIC:
-                            cells.add((int)cell.getNumericCellValue() + "");
-                            break;
-                        case STRING:
-                            cells.add(cell.getStringCellValue());
-                            break;
-                    }
-                }
-                String line = String.join("|", cells);
-                writer.println(line);
-                //System.out.println(line);
-            }
-
+          switch(type)
+          {
+            case NUMERIC:
+              cells.add((int) cell.getNumericCellValue() + "");
+              break;
+            case STRING:
+              cells.add(cell.getStringCellValue());
+              break;
+          }
         }
+        String line = String.join("|", cells);
+        writer.println(line);
+        //System.out.println(line);
+      }
 
-        file.close();
-        writer.close();
     }
+
+    file.close();
+    writer.close();
+  }
 }
