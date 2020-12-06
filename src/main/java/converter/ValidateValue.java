@@ -12,17 +12,17 @@ public enum ValidateValue
   SERVICE_PRODUCT_ID("A3", "int", 5, true),
   AGREEMENT_SERIAL_ID("B3", "String", 36, false),
   EXTERNAL_SYSTEM_REFERENCE_HEADER("C3", "String", 32, false),
-  NUM_OF_ROWS("D3", "int", 5, false);
-  //    EXTERNAL_SYSTEM_REFERENCE("externalSystemReference", "String", 32),
-  //    BANK_NUMBER("bankNumber", "int", 3),
-  //    BRANCH_NUMBER("branchNumber", "int", 3),
-  //    ACCOUNT_NUMBER("accountNumber", "int", 7),
-  //    PARTY_ID("partyId", "String", 16),
-  //    PHONE_PREFIX("phonePrefix", "String", 3),
-  //    PHONE_NUMBER("phoneNumber", "int", 7),
-  //    RECORD_CONTENT("recordContent", "String", 34),
-  //    REQUEST_AMOUNT("requestAmount", "long", 3),
-  //    CURRENCY_CODE("currencyCode", "int", 3);
+  NUM_OF_ROWS("D3", "int", 5, false),
+  EXTERNAL_SYSTEM_REFERENCE("A", "String", 32, false),
+  BANK_NUMBER("B", "int", 3, false),
+  BRANCH_NUMBER("C", "int", 3, false),
+  ACCOUNT_NUMBER("D", "int", 7, false),
+  PARTY_ID("E", "String", 16, false),
+  PHONE_PREFIX("F", "String", 3, true),
+  PHONE_NUMBER("G", "int", 7, true),
+  RECORD_CONTENT("H", "String", 34, false),
+  REQUEST_AMOUNT("I", "long", 3, false),
+  CURRENCY_CODE("J", "int", 3, true);
 
   private String idCell;
   private String type;

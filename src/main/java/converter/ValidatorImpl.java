@@ -10,7 +10,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,7 +39,22 @@ public class ValidatorImpl implements Validator
     //Get first/desired sheet from the workbook
     XSSFSheet sheet = workbook.getSheetAt(0);
 
-    Row row = sheet.getRow(2);
+    Iterator<Row> rowIterator = sheet.rowIterator();
+
+    while(rowIterator.hasNext())
+    {
+      Row row = rowIterator.next();
+      if(row.getRowNum() == 2 || row.getRowNum() >= 4)
+      {
+        validateCellByRow(row);
+      }
+    }
+
+    return errors.size() == 0;
+  }
+
+  private void validateCellByRow(Row row)
+  {
     Iterator<Cell> cellIterator = row.cellIterator();
 
     while(cellIterator.hasNext())
@@ -48,69 +62,44 @@ public class ValidatorImpl implements Validator
       Cell cell = cellIterator.next();
       CellAddress idCell = cell.getAddress();
       CellType type = cell.getCellType();
+      String cellAddress = idCell.formatAsString();
 
-      String valueAsString = null;
-      switch(type)
+      if(row.getRowNum() >= 4)
       {
-        case NUMERIC:
-          valueAsString = (int)cell.getNumericCellValue() + "";
-          break;
-        case STRING:
-          valueAsString = cell.getStringCellValue();
-          break;
+        cellAddress = cellAddress.substring(0, 1);
       }
 
-        ValidateValue validateValue = Arrays.stream(ValidateValue.values()).filter(v -> v.getIdCell().equals(idCell.formatAsString())).findFirst().orElse(null);
-
-        if(validateValue != null && !validatorValue(valueAsString, validateValue.getType(), validateValue.getSize(), validateValue.isBeforeZero()))
+      ValidateValue validateValue = null;
+      for(ValidateValue v : ValidateValue.values())
+      {
+        if(v.getIdCell().equals(cellAddress))
         {
-          errors.add("Wrong value for cell " + idCell + ": change it to " + validateValue.getType() + " size " + validateValue.getSize());
+          validateValue = v;
+          break;
         }
+      }
+
+      if(validateValue != null)
+      {
+        String valueAsString = null;
+        switch(type)
+        {
+          case NUMERIC:
+            valueAsString = (int) cell.getNumericCellValue() + "";
+            break;
+          case STRING:
+            valueAsString = cell.getStringCellValue();
+            break;
+          default:
+            break;
+        }
+
+        if(valueAsString != null && !validatorValue(valueAsString, validateValue.getType(), validateValue.getSize(), validateValue.isBeforeZero()))
+        {
+          errors.add("Wrong value for cell " + idCell + ": change it to " + validateValue.getType() + " max size = " + validateValue.getSize());
+        }
+      }
     }
-
-
-    //        //Iterate through each rows one by one
-    //        Iterator<Row> rowIterator = sheet.iterator();
-    //
-    //
-    //
-    //        while (rowIterator.hasNext())
-    //        {
-    //            Row row = rowIterator.next();
-    //            if(row.getRowNum() == 1)
-    //            {
-    //                Iterator<Cell> cellIterator = row.cellIterator();
-    //
-    //
-    //            }
-    //
-    //
-    //            if(row.getRowNum() == 2 || row.getRowNum() >= 4)
-    //            {
-    //                //For each row, iterate through all the columns
-    //                Iterator<Cell> cellIterator = row.cellIterator();
-    //
-    //                while (cellIterator.hasNext())
-    //                {
-    //                    Cell cell = cellIterator.next();
-    //                    CellType type = cell.getCellType();
-    //                    //Check the cell type and format accordingly
-    //
-    //                    switch (type)
-    //                    {
-    //                        case NUMERIC:
-    //                            cells.add((int)cell.getNumericCellValue() + "");
-    //                            break;
-    //                        case STRING:
-    //                            cells.add(cell.getStringCellValue());
-    //                            break;
-    //                    }
-    //                }
-    //                String line = String.join("|", cells);
-    //                writer.println(line);
-    //                //System.out.println(line);
-    //            }
-    return errors.size() == 0;
   }
 
   private boolean validateExtension(String name)
@@ -143,8 +132,7 @@ public class ValidatorImpl implements Validator
         try
         {
           Integer.parseInt(value);
-        }
-        catch(Exception exception)
+        } catch(Exception exception)
         {
           return false;
         }

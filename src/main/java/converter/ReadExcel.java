@@ -91,7 +91,7 @@ public class ReadExcel extends JPanel implements ActionListener
         if(validatorImpl.validateFile(file))
           saveButton.setVisible(true);
         else
-          validatorImpl.getErrors().forEach(error -> log.append(error));
+          validatorImpl.getErrors().forEach(error -> log.append(error + newline));
       }
       else
       {
